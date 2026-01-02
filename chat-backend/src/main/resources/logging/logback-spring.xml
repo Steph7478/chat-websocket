@@ -1,0 +1,38 @@
+<configuration>
+    <!-- PATHS -->
+    <property name="LOG_PATH" value="logs"/>
+    <property name="SECURITY_LOG" value="${LOG_PATH}/security-audit.log"/>
+    <property name="LOG_PATTERN" value="%d{HH:mm:ss.SSS} [ %-5level] %msg%n"/>
+
+    <!-- ROOT -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- CONSOLE -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- LOGGER -->
+    <logger name="SECURITY_AUDIT" level="WARN" additivity="false">
+        <appender-ref ref="SECURITY_FILE"/>
+    </logger>
+
+    <!-- SECURITY FILE -->
+    <appender name="SECURITY_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${SECURITY_LOG}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_PATH}/security-audit.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>90</maxHistory>
+        </rollingPolicy>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+</configuration>
