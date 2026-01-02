@@ -1,0 +1,24 @@
+---
+logging:
+  config: classpath:logging/logback-spring.xml
+redisson:
+  singleServerConfig:
+    address: redis://${REDIS_HOST:localhost}:${REDIS_PORT:6379}
+    password: ${REDIS_PASSWORD:password}
+server:
+  port: 8080
+  ssl:
+    key-alias: chat-local
+    key-store: classpath:keystore.p12
+    key-store-password: 123456
+    key-store-type: PKCS12
+spring:
+  application:
+    name: chat
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      password: ${REDIS_PASSWORD:password}
+      port: ${REDIS_PORT:6379}
+  messages:
+    encoding: UTF-8
