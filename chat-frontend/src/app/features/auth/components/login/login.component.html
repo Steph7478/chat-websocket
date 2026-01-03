@@ -2,12 +2,19 @@
     <h1 class="login-title">Login</h1>
     <p class="login-subtitle">Type your name</p>
 
-    <form class="login-form">
+    <form class="login-form" [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="input-container">
-            <input type="text" class="input" placeholder="Username" />
+            <input type="text" class="input" formControlName="username" placeholder="Username" />
             <button type="submit" class="button" aria-label="Submit login">
                 →
             </button>
         </div>
+
+        @if(username.invalid && username.touched) {
+        <div class="error">
+            Username is required and must be at least 3 characters.
+        </div>
+        }
+
     </form>
 </section>

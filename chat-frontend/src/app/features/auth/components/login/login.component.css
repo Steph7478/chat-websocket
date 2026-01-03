@@ -17,7 +17,7 @@
 }
 
 .input {
-    @apply bg-white rounded-sm w-full;
+    @apply bg-white rounded-sm w-full text-black px-2;
 }
 
 .button {
