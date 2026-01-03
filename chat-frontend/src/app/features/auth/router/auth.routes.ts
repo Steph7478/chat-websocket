@@ -12,7 +12,7 @@ export const AUTH_ROUTES: Routes = [
                 path: 'login',
                 loadComponent: () =>
                     import('../components/login/login.component')
-                        .then(m => m.LoginPage)
+                        .then(m => m.LoginComponent)
             },
             {
                 path: '',
