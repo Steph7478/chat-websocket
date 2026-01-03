@@ -1,0 +1,25 @@
+@import 'styles.css';
+
+.login {
+    @apply flex flex-col gap-2 text-white w-full;
+}
+
+.login-title {
+    @apply text-lg font-semibold;
+}
+
+.login-subtitle {
+    @apply text-sm opacity-80;
+}
+
+.login-form {
+    @apply mt-2;
+}
+
+.input-container {
+    @apply flex gap-2;
+}
+
+.input {
+    @apply bg-white rounded-sm w-full max-w-[150px];
+}
