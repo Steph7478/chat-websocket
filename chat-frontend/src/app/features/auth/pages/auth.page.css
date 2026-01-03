@@ -50,7 +50,11 @@
 }
 
 .user-avatar-container {
-    @apply flex-initial w-1/4;
+    @apply flex-initial w-1/4 border-2 border-gray-50/50 rounded-xl justify-center items-center;
+}
+
+.user-avatar-container svg {
+    @apply fill-[var(--color-xp-text-muted)];
 }
 
 .router-container {
