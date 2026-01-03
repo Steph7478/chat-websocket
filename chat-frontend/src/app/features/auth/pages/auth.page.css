@@ -1,0 +1,17 @@
+@import 'styles.css';
+
+.auth-layout {
+    @apply bg-blue-400 w-full min-h-svh flex justify-center items-center gap-x-5;
+}
+
+.logo-box {
+    @apply flex flex-col text-sm text-white;
+}
+
+.line {
+    @apply w-[2px] self-stretch bg-gradient-to-b from-transparent via-gray-300 to-transparent;
+}
+
+.auth-box {
+    @apply w-fit bg-gradient-to-r from-blue-700 via-blue-700/60 to-transparent rounded-md flex p-5;
+}
