@@ -1,1 +1,14 @@
 @import "tailwindcss";
+
+@theme {
+    --color-xp-blue: #3A6EA5;
+    --color-xp-box: #1E3D7C;
+    --color-xp-text: #FFFFFF;
+    --color-xp-text-muted: #C0C0C0;
+    --color-xp-button: #C0D8F0;
+    --color-xp-button-hover: #7BAEDC;
+    --color-xp-button-ok: #0F9D58;
+    --color-xp-button-ok-hover: #0B7A45;
+    --color-xp-button-cancel: #1A2B5C;
+    --color-xp-button-cancel-hover: #162A55;
+}

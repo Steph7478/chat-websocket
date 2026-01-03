@@ -1,25 +1,29 @@
 @import 'styles.css';
 
 .login {
-    @apply flex flex-col gap-2 text-white w-full;
+    @apply flex flex-col justify-center text-xp-text relative pb-5 w-full;
 }
 
 .login-title {
-    @apply text-lg font-semibold;
+    @apply text-base font-semibold m-0 w-full;
 }
 
 .login-subtitle {
-    @apply text-sm opacity-80;
-}
-
-.login-form {
-    @apply mt-2;
+    @apply text-sm opacity-80 m-0 w-full;
 }
 
 .input-container {
-    @apply flex gap-2;
+    @apply flex absolute translate-y-[50%] gap-x-2;
 }
 
 .input {
-    @apply bg-white rounded-sm w-full max-w-[150px];
+    @apply bg-white rounded-sm w-full;
+}
+
+.button {
+    @apply bg-xp-button-ok px-2 border-white border-[1px] rounded-sm;
+}
+
+.button:hover {
+    @apply bg-xp-button-ok-hover;
 }
