@@ -5,7 +5,31 @@
 }
 
 .logo-box {
-    @apply flex flex-col text-sm text-xp-text;
+    @apply flex flex-col text-sm text-xp-text gap-y-2;
+}
+
+.logo-wrapper {
+    @apply flex flex-col w-fit self-end;
+}
+
+.logo-brand {
+    @apply flex w-full justify-start items-end gap-1;
+}
+
+.logo-brand span {
+    @apply text-[9px];
+}
+
+.logo-footer {
+    @apply flex w-full justify-between;
+}
+
+.logo-footer .system-name {
+    @apply text-lg;
+}
+
+.logo-footer .version {
+    @apply text-[12px] text-amber-600;
 }
 
 .line {
@@ -19,9 +43,16 @@
 .auth-box::before {
     content: "";
     @apply absolute inset-[-1px] pointer-events-none rounded-l-2xl p-[1px_0_1px_1px] bg-gradient-to-r from-white/50 via-white/25 to-transparent;
-
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     mask-composite: exclude;
+}
+
+.user-avatar-container {
+    @apply flex-initial w-1/4;
+}
+
+.router-container {
+    @apply flex-initial w-3/4;
 }
