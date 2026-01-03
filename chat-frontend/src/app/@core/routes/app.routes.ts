@@ -1,17 +1,8 @@
 import { Routes } from '@angular/router';
-import { MainLayoutComponent } from '../layout/main-layout.component';
+import { CORE_ROUTES } from './router';
+import { AUTH_ROUTES } from '../../features/auth/router/auth.routes';
 
-export const routes: Routes = [
-    {
-        path: '',
-        component: MainLayoutComponent,
-        children: [
-            {
-                path: '',
-                loadChildren: () =>
-                    import('../../features/home')
-                        .then(m => m.HOME_ROUTES),
-            },
-        ],
-    },
+export const APP_ROUTES: Routes = [
+    ...AUTH_ROUTES,
+    ...CORE_ROUTES
 ];
