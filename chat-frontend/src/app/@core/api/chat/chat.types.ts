@@ -1,0 +1,21 @@
+export type ChatMessageType =
+    | 'TEXT'
+    | 'ENCRYPTED_MSG'
+    | 'KEY_EXCHANGE'
+    | 'KEY_EXCHANGE_ACK'
+    | 'GET_PUB_KEY'
+    | 'PUB_KEY_RESPONSE';
+
+export interface ChatMessageDto {
+    from: string;
+    to: string;
+    payload?: string;
+    publicKey?: string;
+    type: ChatMessageType;
+}
+
+export interface ChatMessage {
+    from: string;
+    text: string;
+    private: boolean;
+}

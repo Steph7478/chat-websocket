@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AuthService } from '../../../../@core/services/auth.service';
+import { AuthService } from '../../../../@core/services/auth/auth.service';
 
 @Component({
   selector: 'login-page',
@@ -15,7 +15,10 @@ export class LoginComponent {
   private authService = inject(AuthService);
 
   loginForm = new FormGroup({
-    username: new FormControl('', [Validators.required, Validators.minLength(3)])
+    username: new FormControl<string>('', {
+      nonNullable: true,
+      validators: [Validators.required, Validators.minLength(3)]
+    })
   });
 
   onSubmit() {
@@ -23,7 +26,7 @@ export class LoginComponent {
       this.loginForm.markAllAsTouched();
       return;
     }
-    this.authService.login();
+    this.authService.login(this.username.value);
     this.router.navigate(['/']);
   }
 
