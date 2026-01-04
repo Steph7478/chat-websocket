@@ -30,10 +30,15 @@ export class LoginComponent {
     this.authService.login(this.username.value)
       .subscribe({
         next: () => {
+          const audio = new Audio('assets/windows-xp-startup.mp3');
+          audio.play().catch(err => {
+            console.warn("audio failed: ", err);
+          });
+
           this.router.navigate(['/']);
         },
         error: (err) => {
-          console.error('Erro no login', err);
+          console.error('Error login', err);
         }
       });
   }

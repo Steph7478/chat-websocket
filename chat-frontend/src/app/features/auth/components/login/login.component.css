@@ -1,7 +1,7 @@
 @import 'styles.css';
 
 .login {
-    @apply flex flex-col justify-center text-xp-text relative pb-5 w-full;
+    @apply flex flex-col justify-center text-xp-text relative w-full pb-2;
 }
 
 .login-title {
@@ -17,13 +17,17 @@
 }
 
 .input {
-    @apply bg-white rounded-sm w-full text-black px-2;
+    @apply w-full text-black px-2;
 }
 
 .button {
-    @apply bg-xp-button-ok px-2 border-white border-[1px] rounded-sm;
+    @apply font-semibold text-white select-none cursor-pointer rounded-sm border-t border-white border-b border-black bg-gradient-to-b from-[#7CFC00] to-[#0F9D58] shadow-inner min-w-0;
 }
 
 .button:hover {
     @apply bg-xp-button-ok-hover;
+}
+
+.start-button {
+    @apply px-3 py-1 font-semibold text-white select-none cursor-pointer rounded-sm border-t border-white border-b border-black bg-gradient-to-b from-[#7CFC00] to-[#0F9D58] shadow-inner;
 }
