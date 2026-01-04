@@ -1,5 +1,0 @@
-@import "styles.css";
-
-.card {
-    @apply text-red-500;
-}

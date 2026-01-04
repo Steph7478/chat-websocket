@@ -1,0 +1,9 @@
+@import "styles.css";
+
+.chat-container {
+    @apply absolute inset-0 w-full h-full flex justify-center items-center pointer-events-none;
+}
+
+.window {
+    @apply pointer-events-auto;
+}

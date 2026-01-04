@@ -1,8 +1,16 @@
 @import 'styles.css';
 
 .home {
-    @apply min-h-dvh;
+    @apply min-h-dvh flex justify-start items-start px-3 w-full;
     background-image: url('/assets/background.jpg');
     background-size: cover;
     background-position: center;
+}
+
+.items-container {
+    @apply flex flex-col justify-center items-center gap-y-5;
+}
+
+.icons {
+    @apply font-bold flex justify-center items-center flex-col;
 }
