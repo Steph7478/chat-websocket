@@ -26,9 +26,18 @@ export class LoginComponent {
       this.loginForm.markAllAsTouched();
       return;
     }
-    this.authService.login(this.username.value);
-    this.router.navigate(['/']);
+
+    this.authService.login(this.username.value)
+      .subscribe({
+        next: () => {
+          this.router.navigate(['/']);
+        },
+        error: (err) => {
+          console.error('Erro no login', err);
+        }
+      });
   }
+
 
   get username() {
     return this.loginForm.get('username')!;
