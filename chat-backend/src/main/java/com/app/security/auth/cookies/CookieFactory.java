@@ -11,7 +11,7 @@ public class CookieFactory {
         return ResponseCookie.from(AUTH_COOKIE, token)
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .path("/")
                 .maxAge(900)
                 .build();
@@ -21,7 +21,7 @@ public class CookieFactory {
         return ResponseCookie.from(REFRESH_COOKIE, token)
                 .httpOnly(true)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .path("/")
                 .maxAge(604800)
                 .build();

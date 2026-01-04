@@ -45,14 +45,16 @@ class AuthControllerTest {
                 .uri(uri -> uri.path("/auth/login").queryParam("username", username).build())
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(String.class)
-                .isEqualTo("Autenticado com sucesso")
+                .expectBody()
+                .jsonPath("$.success").isEqualTo(true)
+                .jsonPath("$.message").isEqualTo("Autenticado com sucesso")
                 .consumeWith(resp -> {
                     var cookies = resp.getResponseHeaders().get(HttpHeaders.SET_COOKIE);
                     assert cookies != null;
                     assert cookies.stream().anyMatch(c -> c.contains("__Host-AUTH=jwt-token"));
                     assert cookies.stream().anyMatch(c -> c.contains("__Host-REFRESH=refresh-token"));
                 });
+
     }
 
     @Test

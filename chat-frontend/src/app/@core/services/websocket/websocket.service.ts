@@ -17,7 +17,7 @@ export class WebsocketService {
         this.socket = new WebSocket(url);
 
         this.socket.onopen = () => {
-            console.log('🟢 WebSocket conectado');
+            console.log('WebSocket conectado');
             this.connectedSubject.next(true);
         };
 
@@ -25,8 +25,8 @@ export class WebsocketService {
             sessionStorage.removeItem('user_session');
         };
 
-        this.socket.onclose = (event) => {
-            console.log('🔴 WebSocket desconectado:', event.reason);
+        this.socket.onclose = () => {
+            console.log('WebSocket desconectado');
             this.connectedSubject.next(false);
             this.socket = undefined;
         };
