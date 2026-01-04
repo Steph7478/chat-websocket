@@ -26,7 +26,7 @@ The implementation focuses on robust session management, preventing "Ghost Socke
 ### 1. 🔐 Authentication & Token Management (Auth Hardening)
 * **Asymmetric JWT (RS256):** Signed with RSA key pairs (Private signs, Public validates) via `KeyProvider.java`, ensuring only the backend can issue valid tokens.
 * **BFF (Backend-for-Frontend):** An intermediary layer where the frontend does not store tokens accessible by JS, preventing XSS-based theft.
-* **Military-Grade Cookies:** Strict implementation of `HttpOnly`, `Secure`, `SameSite=Strict`, and the `__Host-` prefix.
+* **Military-Grade Cookies:** Implementation of `HttpOnly`, `Secure`, `SameSite=Lax`, and the `__Host-` prefix.
 * **Refresh Token Rotation:** Single-use tokens with reuse detection that invalidates the entire token family upon fraud attempt.
 * **Key Rotation:** Periodic rotation of RSA keys using the `kid` (Key ID) header via `KeyRotationScheduler.java`.
 * **Silent JWT Refresh:** Background token updates via BFF to maintain the WebSocket connection without user interruption.
