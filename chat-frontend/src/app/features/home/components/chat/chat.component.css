@@ -7,3 +7,35 @@
 .window {
     @apply pointer-events-auto;
 }
+
+.user-list {
+    @apply max-w-[80px] w-full overflow-y-auto;
+}
+
+.chat-layout {
+    @apply flex gap-5 h-[70vh] min-w-0 overflow-hidden;
+}
+
+main {
+    @apply flex-1 min-w-0;
+}
+
+.chat-area {
+    @apply h-full flex flex-col gap-2 min-w-0;
+}
+
+.messages-display {
+    @apply bg-white/50 h-full overflow-y-auto overflow-x-hidden w-full p-2 flex flex-col min-h-0;
+}
+
+.message {
+    @apply mb-2 break-all whitespace-pre-wrap w-full block;
+}
+
+.chat-area {
+    @apply h-full flex flex-col gap-2;
+}
+
+.button {
+    @apply flex h-fit w-full;
+}

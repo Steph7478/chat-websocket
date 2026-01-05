@@ -4,7 +4,8 @@ export type ChatMessageType =
     | 'KEY_EXCHANGE'
     | 'KEY_EXCHANGE_ACK'
     | 'GET_PUB_KEY'
-    | 'PUB_KEY_RESPONSE';
+    | 'PUB_KEY_RESPONSE'
+    | 'USER_LIST';
 
 export interface ChatMessageDto {
     from: string;
@@ -18,4 +19,5 @@ export interface ChatMessage {
     from: string;
     text: string;
     private: boolean;
+    time: string;
 }

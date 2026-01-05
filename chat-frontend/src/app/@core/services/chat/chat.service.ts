@@ -10,6 +10,9 @@ export class ChatService {
     private messagesSubject = new BehaviorSubject<ChatMessage[]>([]);
     messages$ = this.messagesSubject.asObservable();
 
+    private usersSubject = new BehaviorSubject<string[]>([]);
+    users$ = this.usersSubject.asObservable();
+
     private publicKeys: Record<string, string> = {};
     private pending: Record<string, string> = {};
 
@@ -40,27 +43,16 @@ export class ChatService {
             }
         });
     }
-
-    private async processIncoming(dto: ChatMessageDto) {
-        if (dto.type === 'ENCRYPTED_MSG') {
-            try {
-                const text = await this.crypto.decrypt(dto.payload!);
-                this.pushMessage({ from: dto.from, text, private: true });
-            } catch {
-                this.pushMessage({
-                    from: dto.from,
-                    text: '[Erro de criptografia]',
-                    private: true
-                });
-            }
-        } else {
-            this.pushMessage(mapChatMessage(dto));
-        }
-    }
-
     private async handleSystem(dto: ChatMessageDto) {
+        if (dto.type === 'USER_LIST') {
+            const list = dto.payload ? dto.payload.split(',') : [];
+            this.usersSubject.next(list);
+            return;
+        }
+
         if (dto.type === 'PUB_KEY_RESPONSE' && dto.publicKey) {
             this.publicKeys[dto.from] = dto.publicKey;
+
 
             const text = this.pending[dto.from];
             if (text) {
@@ -74,10 +66,29 @@ export class ChatService {
                 });
 
                 delete this.pending[dto.from];
-                this.pushMessage({ from: 'me', text, private: true });
+                this.pushMessage({ from: 'me', text, private: true, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
             }
         }
     }
+
+    private async processIncoming(dto: ChatMessageDto) {
+        if (dto.type === 'ENCRYPTED_MSG') {
+            try {
+                const text = await this.crypto.decrypt(dto.payload!);
+                this.pushMessage({ from: dto.from, text, private: true, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+            } catch {
+                this.pushMessage({
+                    from: dto.from,
+                    text: '[Erro de criptografia]',
+                    private: true,
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                });
+            }
+        } else {
+            this.pushMessage(mapChatMessage(dto));
+        }
+    }
+
 
     sendPublic(text: string) {
         this.socket.send({
@@ -87,7 +98,7 @@ export class ChatService {
             type: 'TEXT'
         });
 
-        this.pushMessage({ from: 'me', text, private: false });
+        this.pushMessage({ from: 'me', text, private: false, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
     }
 
     async sendPrivate(to: string, text: string) {
@@ -108,7 +119,7 @@ export class ChatService {
             type: 'ENCRYPTED_MSG'
         });
 
-        this.pushMessage({ from: 'me', text, private: true });
+        this.pushMessage({ from: 'me', text, private: true, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
     }
 
     disconnect() {
