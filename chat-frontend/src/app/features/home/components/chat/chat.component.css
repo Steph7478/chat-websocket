@@ -9,7 +9,15 @@
 }
 
 .user-list {
-    @apply max-w-[80px] w-full overflow-y-auto;
+    @apply max-w-[80px] w-full overflow-y-auto bg-xp-blue;
+}
+
+.user-list p {
+    @apply text-white text-base p-2 text-center;
+}
+
+.user-list ul {
+    @apply bg-white p-2 text-black font-bold;
 }
 
 .chat-layout {
@@ -29,13 +37,21 @@ main {
 }
 
 .message {
-    @apply mb-2 break-all whitespace-pre-wrap w-full block;
+    @apply mb-2 break-all whitespace-pre-wrap w-full block text-sm;
 }
 
-.chat-area {
-    @apply h-full flex flex-col gap-2;
-}
-
-.button {
+.input-row {
     @apply flex h-fit w-full;
+}
+
+.input-row input {
+    @apply w-full;
+}
+
+.user-item {
+    @apply flex items-center gap-[8px]
+}
+
+.status-dot {
+    @apply bg-green-500 w-[8px] h-[8px] rounded-full inline-block;
 }

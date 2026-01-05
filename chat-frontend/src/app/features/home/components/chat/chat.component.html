@@ -13,7 +13,10 @@
                 <p>Online</p>
                 <ul>
                     @for (user of users(); track user) {
-                    <li>{{ user }}</li>
+                    <li class="user-item">
+                        <span class="status-dot"></span>
+                        {{ user }}
+                    </li>
                     } @empty {
                     <li class="opacity-50 text-xs">Nenhum usuário online</li>
                     }
