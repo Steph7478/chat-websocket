@@ -103,13 +103,12 @@ public class ChatHandler implements WebSocketHandler {
                                 .then(Mono.when(receive, send, idle))
                                 .doFinally(signal -> {
                                         processor.cleanupSession(user, fp).subscribe();
+
                                         broadcastService.unregister(session).subscribe();
                                         broadcastService.broadcastSystemMessage(user + " saiu").subscribe();
                                         broadcastService.broadcastUserList().subscribe();
 
                                         heartbeatService.stop(session.getId());
-                                        idleTimeoutMonitor.remove(session.getId());
-                                        registry.removeSession(user, fp).subscribe();
 
                                         SecurityLogger.logAnomaly(
                                                         "CHAT_LEAVE",

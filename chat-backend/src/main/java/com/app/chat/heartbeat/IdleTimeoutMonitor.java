@@ -31,7 +31,4 @@ public class IdleTimeoutMonitor {
                                                 : Mono.empty())
                                 .then();
         }
-
-        public void remove(String sessionId) {
-        }
 }
