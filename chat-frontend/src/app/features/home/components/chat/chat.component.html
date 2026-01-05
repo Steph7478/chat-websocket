@@ -1,6 +1,6 @@
 @if (showModal()) {
 <div class="chat-container">
-    <div class="window" style="width: 600px">
+    <div class="window">
         <div class="title-bar">
             <div class="title-bar-text">Chat Público</div>
             <div class="title-bar-controls">
@@ -8,6 +8,7 @@
             </div>
         </div>
 
+        <private-modal #private></private-modal>
         <div class="window-body chat-layout">
             <aside class="user-list">
                 <p>Online</p>
@@ -16,6 +17,17 @@
                     <li class="user-item">
                         <span class="status-dot"></span>
                         {{ user }}
+                        <svg class="ml-auto cursor-pointer" width="20px" height="20px" viewBox="0 0 32 32" version="1.1"
+                            (click)="private.openChatWith(user)" xmlns="http://www.w3.org/2000/svg"
+                            xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <g id="icomoon-ignore">
+                            </g>
+                            <path
+                                d="M21.331 10.669v-7.997h-18.659v14.394h7.997v7.997h11.063l4.265 4.264h0.665v-4.264h2.666v-14.394h-7.997zM3.738 16v-12.262h16.527v6.931h-9.596v5.331h-6.931zM28.262 23.997h-2.666v3.422l-3.423-3.422h-10.439v-12.262h16.527v12.262z"
+                                fill="#000000">
+
+                            </path>
+                        </svg>
                     </li>
                     } @empty {
                     <li class="opacity-50 text-xs">Nenhum usuário online</li>

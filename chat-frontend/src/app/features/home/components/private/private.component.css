@@ -1,0 +1,29 @@
+@import "styles.css";
+
+.private-container {
+    @apply absolute inset-0 w-full h-full flex justify-start items-start pointer-events-none;
+}
+
+.window {
+    @apply pointer-events-auto max-w-[300px] w-full;
+}
+
+main {
+    @apply flex-1 min-w-0;
+}
+
+.messages-display {
+    @apply bg-white/50 h-full overflow-y-auto overflow-x-hidden w-full p-2 flex flex-col min-h-0;
+}
+
+.message {
+    @apply mb-2 break-all whitespace-pre-wrap w-full block text-sm;
+}
+
+.input-row {
+    @apply flex h-fit w-full;
+}
+
+.input-row input {
+    @apply w-full;
+}

@@ -9,12 +9,14 @@ import {
 } from '@angular/core';
 import { ChatService } from '../../../../@core/services/chat/chat.service';
 import { Subscription } from 'rxjs';
+import { PrivateComponent } from '../private/private.component';
 
 @Component({
     standalone: true,
     selector: 'chat-modal',
     templateUrl: './chat.component.html',
-    styleUrls: ['./chat.component.css']
+    styleUrls: ['./chat.component.css'],
+    imports: [PrivateComponent]
 })
 export class ChatComponent implements OnDestroy {
 
