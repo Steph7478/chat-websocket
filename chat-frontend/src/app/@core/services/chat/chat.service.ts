@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ChatCryptoService } from './chat-crypto.service';
 import { ChatSocket } from '../../api/chat/chat.socket';
@@ -17,10 +17,8 @@ export class ChatService {
     private publicKeys: Record<string, string> = {};
     private pending: Record<string, string> = {};
 
-    constructor(
-        private socket: ChatSocket,
-        private crypto: ChatCryptoService
-    ) { }
+    private socket = inject(ChatSocket);
+    private crypto = inject(ChatCryptoService);
 
     private socketSub?: Subscription;
     private initialized = false;
