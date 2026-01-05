@@ -21,6 +21,7 @@ public class IdleTimeoutMonitor {
                         String user,
                         String ip) {
                 return Flux.interval(CHECK)
+                                .takeUntilOther(session.closeStatus())
                                 .filter(t -> System.currentTimeMillis() - lastSeen.get() > TIMEOUT_MS)
                                 .next()
                                 .doOnNext(t -> SecurityLogger.logAnomaly(
@@ -29,5 +30,8 @@ public class IdleTimeoutMonitor {
                                                 ? session.close()
                                                 : Mono.empty())
                                 .then();
+        }
+
+        public void remove(String sessionId) {
         }
 }

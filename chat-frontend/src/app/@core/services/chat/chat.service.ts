@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subscription } from 'rxjs';
 import { ChatCryptoService } from './chat-crypto.service';
 import { ChatSocket } from '../../api/chat/chat.socket';
 import { ChatMessage, ChatMessageDto } from '../../api/chat/chat.types';
@@ -7,11 +7,12 @@ import { mapChatMessage } from '../../api/chat/chat.mapper';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
+
     private messagesSubject = new BehaviorSubject<ChatMessage[]>([]);
-    messages$ = this.messagesSubject.asObservable();
+    readonly messages$ = this.messagesSubject.asObservable();
 
     private usersSubject = new BehaviorSubject<string[]>([]);
-    users$ = this.usersSubject.asObservable();
+    readonly users$ = this.usersSubject.asObservable();
 
     private publicKeys: Record<string, string> = {};
     private pending: Record<string, string> = {};
@@ -19,23 +20,28 @@ export class ChatService {
     constructor(
         private socket: ChatSocket,
         private crypto: ChatCryptoService
-    ) {
-        this.init();
-    }
+    ) { }
 
-    private async init() {
+    private socketSub?: Subscription;
+    private initialized = false;
+
+    async connect() {
+        if (this.initialized) return;
+        this.initialized = true;
+
         this.socket.connect();
+
         await this.crypto.init();
         const myKey = await this.crypto.exportPublicKey();
 
         this.socket.send({
             type: 'KEY_EXCHANGE',
             to: 'SYSTEM',
-            publicKey: myKey,
-            from: ''
+            from: '',
+            publicKey: myKey
         });
 
-        this.socket.messages$.subscribe(dto => {
+        this.socketSub = this.socket.messages$.subscribe(dto => {
             if (dto.type === 'TEXT' || dto.type === 'ENCRYPTED_MSG') {
                 this.processIncoming(dto);
             } else {
@@ -43,31 +49,50 @@ export class ChatService {
             }
         });
     }
+
+    disconnect() {
+        this.socketSub?.unsubscribe();
+        this.socketSub = undefined;
+
+        this.socket.disconnect();
+
+        this.initialized = false;
+    }
+
+
     private async handleSystem(dto: ChatMessageDto) {
         if (dto.type === 'USER_LIST') {
-            const list = dto.payload ? dto.payload.split(',') : [];
-            this.usersSubject.next(list);
+            const list = dto.payload?.trim()
+                ? dto.payload.split(',')
+                : [];
+
+            this.usersSubject.next([...list]);
             return;
         }
 
         if (dto.type === 'PUB_KEY_RESPONSE' && dto.publicKey) {
             this.publicKeys[dto.from] = dto.publicKey;
 
-
             const text = this.pending[dto.from];
-            if (text) {
-                const encrypted = await this.crypto.encrypt(text, dto.publicKey);
+            if (!text) return;
 
-                this.socket.send({
-                    from: '',
-                    to: dto.from,
-                    payload: encrypted,
-                    type: 'ENCRYPTED_MSG'
-                });
+            const encrypted = await this.crypto.encrypt(text, dto.publicKey);
 
-                delete this.pending[dto.from];
-                this.pushMessage({ from: 'me', text, private: true, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
-            }
+            this.socket.send({
+                from: '',
+                to: dto.from,
+                payload: encrypted,
+                type: 'ENCRYPTED_MSG'
+            });
+
+            delete this.pending[dto.from];
+
+            this.pushMessage({
+                from: 'me',
+                text,
+                private: true,
+                time: this.getCurrentTime()
+            });
         }
     }
 
@@ -75,13 +100,18 @@ export class ChatService {
         if (dto.type === 'ENCRYPTED_MSG') {
             try {
                 const text = await this.crypto.decrypt(dto.payload!);
-                this.pushMessage({ from: dto.from, text, private: true, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+                this.pushMessage({
+                    from: dto.from,
+                    text,
+                    private: true,
+                    time: this.getCurrentTime()
+                });
             } catch {
                 this.pushMessage({
                     from: dto.from,
                     text: '[Erro de criptografia]',
                     private: true,
-                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                    time: this.getCurrentTime()
                 });
             }
         } else {
@@ -89,8 +119,9 @@ export class ChatService {
         }
     }
 
-
     sendPublic(text: string) {
+        if (!text.trim()) return;
+
         this.socket.send({
             from: '',
             to: 'TODOS',
@@ -98,10 +129,17 @@ export class ChatService {
             type: 'TEXT'
         });
 
-        this.pushMessage({ from: 'me', text, private: false, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
+        this.pushMessage({
+            from: 'me',
+            text,
+            private: false,
+            time: this.getCurrentTime()
+        });
     }
 
     async sendPrivate(to: string, text: string) {
+        if (!text.trim()) return;
+
         const pubKey = this.publicKeys[to];
 
         if (!pubKey) {
@@ -119,14 +157,22 @@ export class ChatService {
             type: 'ENCRYPTED_MSG'
         });
 
-        this.pushMessage({ from: 'me', text, private: true, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) });
-    }
-
-    disconnect() {
-        this.socket.disconnect();
+        this.pushMessage({
+            from: 'me',
+            text,
+            private: true,
+            time: this.getCurrentTime()
+        });
     }
 
     private pushMessage(msg: ChatMessage) {
         this.messagesSubject.next([...this.messagesSubject.value, msg]);
+    }
+
+    private getCurrentTime(): string {
+        return new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     }
 }

@@ -37,7 +37,6 @@ public class ChatHandler implements WebSocketHandler {
                         HeartBeatHelper heartBeatHelper,
                         HeartbeatService heartbeatService,
                         IdleTimeoutMonitor idleTimeoutMonitor) {
-
                 this.registry = registry;
                 this.processor = processor;
                 this.broadcastService = broadcastService;
@@ -70,6 +69,7 @@ public class ChatHandler implements WebSocketHandler {
 
                 Mono<Void> initial = registry.registerSession(user, fp, session)
                                 .then(broadcastService.register(session))
+                                .then(broadcastService.broadcastUserList())
                                 .then(session.send(Mono.just(
                                                 session.textMessage(
                                                                 "{\"type\":\"SYSTEM\",\"payload\":\"🔒 Criptografia ponta-a-ponta ativa\"}"))))
@@ -80,29 +80,43 @@ public class ChatHandler implements WebSocketHandler {
                                 .filter(msg -> msg.getType() == WebSocketMessage.Type.TEXT)
                                 .map(WebSocketMessage::getPayloadAsText)
                                 .flatMap(payload -> {
+
                                         if (heartBeatHelper.isHeartbeat(payload)) {
                                                 lastSeen.set(System.currentTimeMillis());
                                                 return Mono.empty();
                                         }
+
                                         return rateLimiterHelper.apply(payload, session)
                                                         .doOnNext(v -> lastSeen.set(System.currentTimeMillis()))
-                                                        .flatMap(v -> processor.processMessage(
-                                                                        payload, session, user, fp, ip));
+                                                        .flatMap(v -> processor.processMessage(payload, session, user,
+                                                                        fp, ip));
                                 })
                                 .then();
 
                 Mono<Void> send = session.send(
-                                heartbeatService.heartbeat(session)
-                                                .takeUntilOther(session.closeStatus()));
+                                heartbeatService.heartbeat(session))
+                                .onErrorResume(e -> Mono.empty());
 
                 Mono<Void> idle = idleTimeoutMonitor.monitor(session, lastSeen, user, ip);
 
-                Mono<Void> cleanup = broadcastService.broadcastSystemMessage(user + " saiu")
-                                .then(processor.cleanupSession(user, fp))
-                                .then(broadcastService.unregister(session));
-
                 return initial
-                                .then(Mono.when(send, receive, idle))
-                                .then(cleanup);
+                                .then(Mono.when(receive, send, idle))
+                                .doFinally(signal -> {
+                                        processor.cleanupSession(user, fp).subscribe();
+                                        broadcastService.unregister(session).subscribe();
+                                        broadcastService.broadcastSystemMessage(user + " saiu").subscribe();
+                                        broadcastService.broadcastUserList().subscribe();
+
+                                        heartbeatService.stop(session.getId());
+                                        idleTimeoutMonitor.remove(session.getId());
+                                        registry.removeSession(user, fp).subscribe();
+
+                                        SecurityLogger.logAnomaly(
+                                                        "CHAT_LEAVE",
+                                                        user,
+                                                        ip,
+                                                        "Usuário saiu (" + signal + ")");
+                                });
         }
+
 }

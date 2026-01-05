@@ -1,4 +1,4 @@
-@if(showModal()){
+@if (showModal()) {
 <div class="chat-container">
     <div class="window" style="width: 600px">
         <div class="title-bar">
@@ -13,28 +13,27 @@
                 <p>Online</p>
                 <ul>
                     @for (user of users(); track user) {
-                    <li class="user-item cursor-pointer hover:bg-gray-200">
-                        {{ user }}
-                    </li>
+                    <li>{{ user }}</li>
                     } @empty {
-                    <li class="text-xs opacity-50">Nenhum usuário online</li>
+                    <li class="opacity-50 text-xs">Nenhum usuário online</li>
                     }
                 </ul>
             </aside>
 
             <main class="w-full">
                 <div class="chat-area">
-                    <span>Global chat</span>
                     <div class="messages-display" #scrollContainer>
                         @for (msg of publicMessages(); track $index) {
                         <div class="message">
-                            <strong>[{{msg.time}}] {{ msg.from }}:</strong> {{ msg.text }}
+                            <strong>[{{ msg.time }}] {{ msg.from }}:</strong>
+                            {{ msg.text }}
                         </div>
                         }
                     </div>
 
-                    <div class="input-row button">
-                        <input type="text" [(ngModel)]="newMessage" (keyup.enter)="sendMessage()" class="w-full" />
+                    <div class="input-row">
+                        <input type="text" [value]="newMessage()" (input)="newMessage.set($any($event.target).value)"
+                            (keyup.enter)="sendMessage()" />
                         <button (click)="sendMessage()">Enviar</button>
                     </div>
                 </div>

@@ -1,23 +1,28 @@
-import { Component, inject, signal, computed, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import {
+    Component,
+    inject,
+    signal,
+    computed,
+    OnDestroy,
+    ViewChild,
+    ElementRef
+} from '@angular/core';
 import { ChatService } from '../../../../@core/services/chat/chat.service';
 import { Subscription } from 'rxjs';
-import { FormsModule } from '@angular/forms';
 
 @Component({
     standalone: true,
     selector: 'chat-modal',
     templateUrl: './chat.component.html',
-    styleUrls: ['./chat.component.css'],
-    imports: [FormsModule]
+    styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnDestroy {
+
     @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
-    showModal = signal(true);
 
-    service = inject(ChatService);
-
-    users = signal<string[]>([]);
+    showModal = signal(false);
     newMessage = signal('');
+    users = signal<string[]>([]);
     private allMessages = signal<any[]>([]);
 
     publicMessages = computed(() =>
@@ -25,44 +30,53 @@ export class ChatComponent implements OnDestroy {
     );
 
     private subs = new Subscription();
+
+    private chatService = inject(ChatService);
+
     constructor() {
         this.subs.add(
-            this.service.messages$.subscribe(msgs => {
+            this.chatService.messages$.subscribe(msgs => {
                 this.allMessages.set(msgs);
                 this.scrollToBottom();
             })
         );
 
         this.subs.add(
-            this.service.users$.subscribe(userList => {
-                this.users.set(userList);
+            this.chatService.users$.subscribe(users => {
+                this.users.set(users);
             })
         );
     }
 
-    sendMessage() {
-        const text = this.newMessage().trim();
-        if (text) {
-            this.service.sendPublic(text);
-            this.newMessage.set('');
-            this.scrollToBottom();
+    toggleModal() {
+        const open = !this.showModal();
+        this.showModal.set(open);
+
+        if (open) {
+            this.chatService.connect();
+        } else {
+            this.chatService.disconnect();
         }
     }
 
-    private scrollToBottom(): void {
-        setTimeout(() => {
-            if (this.scrollContainer) {
-                const el = this.scrollContainer.nativeElement;
-                el.scrollTop = el.scrollHeight;
-            }
-        }, 50);
+    sendMessage() {
+        const text = this.newMessage().trim();
+        if (!text) return;
+
+        this.chatService.sendPublic(text);
+        this.newMessage.set('');
     }
 
-    toggleModal() {
-        this.showModal.set(!this.showModal());
+    private scrollToBottom() {
+        setTimeout(() => {
+            const el = this.scrollContainer?.nativeElement;
+            if (el) el.scrollTop = el.scrollHeight;
+        }, 50);
     }
 
     ngOnDestroy() {
         this.subs.unsubscribe();
+        this.chatService.disconnect();
     }
+
 }
