@@ -64,20 +64,11 @@ The implementation focuses on robust session management, preventing "Ghost Socke
 
 The `ChatHandler` coordinates four independent reactive pipelines. This architecture allows the system to handle high concurrency with low memory overhead.
 
-
-
 **The Handshake & Stream Lifecycle:**
 1. **`initial`**: Validates security context, registers the session, and broadcasts system notifications.
 2. **`send`**: Manages the outbound heartbeat stream, tied to the session's `closeStatus()`.
 3. **`receive`**: Filters and processes incoming messages, including rate limiting and routing.
 4. **`idle`**: Monitors activity to ensure resources are freed when no longer in use.
-
-**Examples of Reactive Operators Used:**
-To coordinate these flows, the project utilizes several Project Reactor operators, such as:
-* **`Mono.when(send, receive, idle)`**: To orchestrate the parallel execution of the session's main streams.
-* **`takeUntilOther`**: To gracefully terminate the heartbeat stream upon session closure.
-* **`flatMap`**: For sequential processing of rate limiting and message routing.
-* **`then(cleanup)`**: To guarantee the execution of unregistration and audit logging after the stream ends.
 
 ---
 
