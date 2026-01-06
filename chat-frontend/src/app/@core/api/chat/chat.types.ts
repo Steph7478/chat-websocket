@@ -16,6 +16,7 @@ export interface ChatMessageDto {
 }
 
 export interface ChatMessage {
+    to?: string;
     from: string;
     text: string;
     private: boolean;

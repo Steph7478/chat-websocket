@@ -1,9 +1,10 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import { BehaviorSubject, Subscription } from 'rxjs';
 import { ChatCryptoService } from './chat-crypto.service';
 import { ChatSocket } from '../../api/chat/chat.socket';
 import { ChatMessage, ChatMessageDto } from '../../api/chat/chat.types';
 import { mapChatMessage } from '../../api/chat/chat.mapper';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({ providedIn: 'root' })
 export class ChatService {
@@ -14,11 +15,14 @@ export class ChatService {
     private usersSubject = new BehaviorSubject<string[]>([]);
     readonly users$ = this.usersSubject.asObservable();
 
+    private readonly myUsername = signal<string | null>(null);
+
     private publicKeys: Record<string, string> = {};
     private pending: Record<string, string> = {};
 
     private socket = inject(ChatSocket);
     private crypto = inject(ChatCryptoService);
+    private auth = inject(AuthService);
 
     private socketSub?: Subscription;
     private initialized = false;
@@ -26,6 +30,11 @@ export class ChatService {
     async connect() {
         if (this.initialized) return;
         this.initialized = true;
+
+        const me = this.auth.getUsername();
+        if (me) {
+            this.myUsername.set(me);
+        }
 
         this.socket.connect();
 
@@ -53,18 +62,23 @@ export class ChatService {
         this.socketSub = undefined;
 
         this.socket.disconnect();
-
         this.initialized = false;
     }
 
-
     private async handleSystem(dto: ChatMessageDto) {
+
         if (dto.type === 'USER_LIST') {
             const list = dto.payload?.trim()
                 ? dto.payload.split(',')
                 : [];
 
-            this.usersSubject.next([...list]);
+            const me = this.myUsername();
+
+            const filtered = me
+                ? list.filter(user => user !== me)
+                : list;
+
+            this.usersSubject.next(filtered);
             return;
         }
 
@@ -86,7 +100,7 @@ export class ChatService {
             delete this.pending[dto.from];
 
             this.pushMessage({
-                from: 'me',
+                from: this.myUsername()!,
                 text,
                 private: true,
                 time: this.getCurrentTime()
@@ -95,15 +109,18 @@ export class ChatService {
     }
 
     private async processIncoming(dto: ChatMessageDto) {
+
         if (dto.type === 'ENCRYPTED_MSG') {
             try {
                 const text = await this.crypto.decrypt(dto.payload!);
+
                 this.pushMessage({
                     from: dto.from,
                     text,
                     private: true,
                     time: this.getCurrentTime()
                 });
+
             } catch {
                 this.pushMessage({
                     from: dto.from,
@@ -112,6 +129,7 @@ export class ChatService {
                     time: this.getCurrentTime()
                 });
             }
+
         } else {
             this.pushMessage(mapChatMessage(dto));
         }
@@ -128,7 +146,7 @@ export class ChatService {
         });
 
         this.pushMessage({
-            from: 'me',
+            from: this.myUsername()!,
             text,
             private: false,
             time: this.getCurrentTime()
@@ -156,7 +174,7 @@ export class ChatService {
         });
 
         this.pushMessage({
-            from: 'me',
+            from: this.myUsername()!,
             text,
             private: true,
             time: this.getCurrentTime()
@@ -164,7 +182,10 @@ export class ChatService {
     }
 
     private pushMessage(msg: ChatMessage) {
-        this.messagesSubject.next([...this.messagesSubject.value, msg]);
+        this.messagesSubject.next([
+            ...this.messagesSubject.value,
+            msg
+        ]);
     }
 
     private getCurrentTime(): string {
@@ -172,5 +193,9 @@ export class ChatService {
             hour: '2-digit',
             minute: '2-digit'
         });
+    }
+
+    get currentUser(): string | null {
+        return this.myUsername();
     }
 }

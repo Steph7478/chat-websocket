@@ -10,6 +10,8 @@ import {
 import { ChatService } from '../../../../@core/services/chat/chat.service';
 import { Subscription } from 'rxjs';
 import { PrivateComponent } from '../private/private.component';
+import { ChatMessage } from '../../../../@core/api/chat/chat.types';
+import { scrollToBottom } from '../../../../shared/scrollToBotton.component';
 
 @Component({
     standalone: true,
@@ -22,24 +24,26 @@ export class ChatComponent implements OnDestroy {
 
     @ViewChild('scrollContainer') private scrollContainer!: ElementRef;
 
+    private chatService = inject(ChatService);
+
     showModal = signal(false);
     newMessage = signal('');
+
     users = signal<string[]>([]);
-    private allMessages = signal<any[]>([]);
+
+    private allMessages = signal<ChatMessage[]>([]);
 
     publicMessages = computed(() =>
-        this.allMessages().filter(m => m.private === false)
+        this.allMessages().filter(m => !m.private)
     );
 
     private subs = new Subscription();
-
-    private chatService = inject(ChatService);
 
     constructor() {
         this.subs.add(
             this.chatService.messages$.subscribe(msgs => {
                 this.allMessages.set(msgs);
-                this.scrollToBottom();
+                scrollToBottom(this.scrollContainer);
             })
         );
 
@@ -51,14 +55,15 @@ export class ChatComponent implements OnDestroy {
     }
 
     toggleModal() {
-        const open = !this.showModal();
-        this.showModal.set(open);
+        this.showModal.update(v => {
+            const next = !v;
 
-        if (open) {
-            this.chatService.connect();
-        } else {
-            this.chatService.disconnect();
-        }
+            next
+                ? this.chatService.connect()
+                : this.chatService.disconnect();
+
+            return next;
+        });
     }
 
     sendMessage() {
@@ -69,16 +74,7 @@ export class ChatComponent implements OnDestroy {
         this.newMessage.set('');
     }
 
-    private scrollToBottom() {
-        setTimeout(() => {
-            const el = this.scrollContainer?.nativeElement;
-            if (el) el.scrollTop = el.scrollHeight;
-        }, 50);
-    }
-
     ngOnDestroy() {
         this.subs.unsubscribe();
-        this.chatService.disconnect();
     }
-
 }
