@@ -39,6 +39,7 @@ export class ChatService {
 
         const myKey = await this.crypto.exportPublicKey();
 
+        // server
         this.socket.send({
             type: 'KEY_EXCHANGE',
             to: 'SYSTEM',
@@ -78,6 +79,7 @@ export class ChatService {
 
             const encrypted = await this.crypto.encrypt(text, dto.publicKey);
 
+            // server
             this.socket.send({
                 from: '',
                 to: dto.from,
@@ -87,6 +89,7 @@ export class ChatService {
 
             delete this.pending[dto.from];
 
+            // ui
             this.pushMessage({
                 from: this.myUsername()!,
                 to: dto.from,
@@ -103,6 +106,7 @@ export class ChatService {
             try {
                 const text = await this.crypto.decrypt(dto.payload!);
 
+                // ui
                 this.pushMessage({
                     from: dto.from,
                     to: this.myUsername()!,
@@ -112,6 +116,7 @@ export class ChatService {
                 });
 
             } catch {
+                // ui
                 this.pushMessage({
                     from: dto.from,
                     to: this.myUsername()!,
@@ -128,6 +133,7 @@ export class ChatService {
     sendPublic(text: string) {
         if (!text.trim()) return;
 
+        // server
         this.socket.send({
             from: '',
             to: 'TODOS',
@@ -135,6 +141,7 @@ export class ChatService {
             type: 'TEXT'
         });
 
+        // ui
         this.pushMessage({
             from: this.myUsername()!,
             to: 'TODOS',
@@ -157,6 +164,7 @@ export class ChatService {
 
         const encrypted = await this.crypto.encrypt(text, pubKey);
 
+        // server
         this.socket.send({
             from: '',
             to,
@@ -164,6 +172,7 @@ export class ChatService {
             type: 'ENCRYPTED_MSG'
         });
 
+        // ui
         this.pushMessage({
             from: this.myUsername()!,
             to,
