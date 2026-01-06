@@ -1,7 +1,7 @@
 @import 'styles.css';
 
 .auth-layout {
-    @apply bg-xp-blue w-full min-h-svh flex justify-center items-center gap-x-5;
+    @apply bg-xp-login w-full min-h-svh flex justify-center items-center gap-x-5;
 }
 
 .logo-box {

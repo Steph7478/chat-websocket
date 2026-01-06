@@ -1,7 +1,7 @@
 @import 'styles.css';
 
 .footer-layout {
-    @apply absolute bottom-0 w-full min-h-[40px] flex items-center justify-between px-2 bg-gradient-to-b from-blue-500 to-blue-800 border-t-2 border-blue-500 shadow-inner text-white text-[12px];
+    @apply absolute bottom-0 w-full min-h-[40px] flex items-center justify-between px-2 bg-gradient-to-b from-xp-blue to-xp-blue-dark border-t-2 border-blue-500 shadow-inner text-white text-[12px];
 }
 
 .icons {
@@ -13,6 +13,16 @@
 }
 
 .start-button {
-    @apply px-3 py-1 font-semibold text-green-800 select-none cursor-pointer rounded-sm bg-gradient-to-b from-[#7CFC00] to-[#0F9D58] shadow-inner;
+    @apply px-4 py-1 font-bold text-white select-none cursor-pointer rounded-md border border-green-900 bg-gradient-to-b from-[#6BDA44] via-[#2EA043] to-[#0F7A2E] active:translate-y-[1px];
 
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.6),
+        0 2px 3px rgba(0, 0, 0, 0.4);
+
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.7);
+}
+
+.start-button:active {
+    box-shadow:
+        inset 0 2px 4px rgba(0, 0, 0, 0.6);
 }

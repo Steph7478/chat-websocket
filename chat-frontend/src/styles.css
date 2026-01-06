@@ -1,7 +1,10 @@
 @import "tailwindcss";
 
 @theme {
-    --color-xp-blue: #3A6EA5;
+    --color-xp-login: #3A6EA5;
+    --color-xp-blue: #0058EE;
+    --color-xp-blue-dark: #0A246A;
+    --color-xp-blue-light: #3A8DFF;
     --color-xp-box: #1E3D7C;
     --color-xp-text: #FFFFFF;
     --color-xp-text-muted: #C0C0C0;
@@ -16,9 +19,9 @@
 @layer utilities {
     .text-outline {
         text-shadow:
-            -1px -1px 0 #000,
-            1px -1px 0 #000,
-            -1px 1px 0 #000,
-            1px 1px 0 #000;
+            -1px -1px 0 #00000090,
+            1px -1px 0 #00000090,
+            -1px 1px 0 #00000090,
+            1px 1px 0 #00000090;
     }
 }
