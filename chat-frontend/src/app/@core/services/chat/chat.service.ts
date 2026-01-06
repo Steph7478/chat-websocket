@@ -32,13 +32,11 @@ export class ChatService {
         this.initialized = true;
 
         const me = this.auth.getUsername();
-        if (me) {
-            this.myUsername.set(me);
-        }
+        if (me) this.myUsername.set(me);
 
         this.socket.connect();
-
         await this.crypto.init();
+
         const myKey = await this.crypto.exportPublicKey();
 
         this.socket.send({
@@ -59,8 +57,6 @@ export class ChatService {
 
     disconnect() {
         this.socketSub?.unsubscribe();
-        this.socketSub = undefined;
-
         this.socket.disconnect();
         this.initialized = false;
     }
@@ -68,17 +64,9 @@ export class ChatService {
     private async handleSystem(dto: ChatMessageDto) {
 
         if (dto.type === 'USER_LIST') {
-            const list = dto.payload?.trim()
-                ? dto.payload.split(',')
-                : [];
-
+            const list = dto.payload?.trim() ? dto.payload.split(',') : [];
             const me = this.myUsername();
-
-            const filtered = me
-                ? list.filter(user => user !== me)
-                : list;
-
-            this.usersSubject.next(filtered);
+            this.usersSubject.next(me ? list.filter(u => u !== me) : list);
             return;
         }
 
@@ -101,6 +89,7 @@ export class ChatService {
 
             this.pushMessage({
                 from: this.myUsername()!,
+                to: dto.from,
                 text,
                 private: true,
                 time: this.getCurrentTime()
@@ -116,6 +105,7 @@ export class ChatService {
 
                 this.pushMessage({
                     from: dto.from,
+                    to: this.myUsername()!,
                     text,
                     private: true,
                     time: this.getCurrentTime()
@@ -124,12 +114,12 @@ export class ChatService {
             } catch {
                 this.pushMessage({
                     from: dto.from,
+                    to: this.myUsername()!,
                     text: '[Erro de criptografia]',
                     private: true,
                     time: this.getCurrentTime()
                 });
             }
-
         } else {
             this.pushMessage(mapChatMessage(dto));
         }
@@ -147,6 +137,7 @@ export class ChatService {
 
         this.pushMessage({
             from: this.myUsername()!,
+            to: 'TODOS',
             text,
             private: false,
             time: this.getCurrentTime()
@@ -175,6 +166,7 @@ export class ChatService {
 
         this.pushMessage({
             from: this.myUsername()!,
+            to,
             text,
             private: true,
             time: this.getCurrentTime()
@@ -182,10 +174,7 @@ export class ChatService {
     }
 
     private pushMessage(msg: ChatMessage) {
-        this.messagesSubject.next([
-            ...this.messagesSubject.value,
-            msg
-        ]);
+        this.messagesSubject.next([...this.messagesSubject.value, msg]);
     }
 
     private getCurrentTime(): string {

@@ -1,13 +1,35 @@
 @if (showModal()) {
 <section class="private-container">
-    <div class="window">
+    <div class="window" style="width:360px">
         <div class="title-bar">
-            <div class="title-bar-text">Chat Público</div>
+            <div class="title-bar-text">
+                Chat privado — {{ targetUser() }}
+            </div>
             <div class="title-bar-controls">
                 <button aria-label="Close" (click)="toggleModal()"></button>
             </div>
         </div>
-        <p>test</p>
+
+        <div class="window-body private-layout">
+            <div class="messages-display" #scrollContainer>
+                @for (msg of privateMessages(); track $index) {
+                <div class="message">
+                    <strong>[{{ msg.time }}] {{ msg.from }}:</strong>
+                    {{ msg.text }}
+                </div>
+                } @empty {
+                <div class="opacity-50 text-xs">
+                    Nenhuma mensagem ainda
+                </div>
+                }
+            </div>
+
+            <div class="input-row">
+                <input type="text" placeholder="Mensagem privada..." [value]="messageText()"
+                    (input)="messageText.set($any($event.target).value)" (keydown.enter)="send()" />
+                <button (click)="send()">Enviar</button>
+            </div>
+        </div>
     </div>
 </section>
 }
