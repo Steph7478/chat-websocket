@@ -12,5 +12,5 @@
 }
 
 .icons {
-    @apply font-bold flex justify-center items-center flex-col;
+    @apply font-bold flex justify-center items-center flex-col text-gray-200;
 }

@@ -1,14 +1,18 @@
 @import 'styles.css';
 
 .footer-layout {
-    @apply absolute bottom-0 w-full min-h-[40px] flex items-center px-2 bg-gradient-to-b from-blue-500 to-blue-800 border-t-2 border-blue-500 shadow-inner text-white text-[12px];
+    @apply absolute bottom-0 w-full min-h-[40px] flex items-center justify-between px-2 bg-gradient-to-b from-blue-500 to-blue-800 border-t-2 border-blue-500 shadow-inner text-white text-[12px];
 }
 
-.footer-layout {
-    @apply w-full min-h-[40px] flex items-center px-2 bg-gradient-to-b from-blue-500 to-blue-800 border-t-2 border-gray-300 shadow-inner text-white text-[12px];
+.icons {
+    @apply flex gap-2 justify-center items-center;
 }
 
+.icons svg {
+    @apply fill-white;
+}
 
 .start-button {
     @apply px-3 py-1 font-semibold text-white select-none cursor-pointer rounded-sm border-t border-white border-b border-black bg-gradient-to-b from-[#7CFC00] to-[#0F9D58] shadow-inner;
+
 }
