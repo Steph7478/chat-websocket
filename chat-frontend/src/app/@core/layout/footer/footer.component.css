@@ -5,7 +5,7 @@
 }
 
 .icons {
-    @apply flex gap-2 justify-center items-center;
+    @apply flex gap-x-2 justify-center items-center;
 }
 
 .icons svg {
@@ -13,6 +13,6 @@
 }
 
 .start-button {
-    @apply px-3 py-1 font-semibold text-white select-none cursor-pointer rounded-sm border-t border-white border-b border-black bg-gradient-to-b from-[#7CFC00] to-[#0F9D58] shadow-inner;
+    @apply px-3 py-1 font-semibold text-green-800 select-none cursor-pointer rounded-sm bg-gradient-to-b from-[#7CFC00] to-[#0F9D58] shadow-inner;
 
 }
