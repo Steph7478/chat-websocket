@@ -1,12 +1,15 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { ModalControlService } from '../../../shared/logoutModal.service';
 
 @Component({
     selector: 'footer',
     standalone: true,
     templateUrl: './footer.component.html',
-    styleUrls: ['./footer.component.css'],
+    styleUrls: ['./footer.component.css']
 })
 export class FooterComponent implements OnInit, OnDestroy {
+    modal = inject(ModalControlService);
+
     time = '';
     date = '';
     private intervalId!: number;

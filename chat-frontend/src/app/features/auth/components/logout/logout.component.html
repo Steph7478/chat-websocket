@@ -1,0 +1,21 @@
+@if (modalService.logoutOpen()) {
+<div class="modal-container">
+    <div class="window">
+        <div class="title-bar">
+            <div class="title-bar-text">Chat Público</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" (click)="modalService.close()"></button>
+            </div>
+        </div>
+        <div class="window-body chat-layout">
+
+            <p>Tem certeza que deseja sair?</p>
+
+            <div class="actions">
+                <button (click)="confirm()">Logout</button>
+                <button (click)="modalService.close()">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
+}

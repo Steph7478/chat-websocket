@@ -1,0 +1,13 @@
+@import 'styles.css';
+
+.modal-container {
+    @apply absolute inset-0 w-full h-full flex justify-center items-center pointer-events-none z-50;
+}
+
+.window {
+    @apply pointer-events-auto max-w-[300px] w-full;
+}
+
+.actions {
+    @apply flex justify-end gap-2 mt-3;
+}
